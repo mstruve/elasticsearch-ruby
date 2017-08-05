@@ -19,6 +19,18 @@ module Elasticsearch
           subject.update_by_query :index => 'foo'
         end
 
+        should "optionally take the :slices argument" do
+          subject.expects(:perform_request).with do |method, url, params, body|
+            assert_equal 'POST', method
+            assert_equal 'foo/_update_by_query', url
+            assert_equal Hash.new, params
+            assert_equal 2, params[:slices]
+            true
+          end.returns(FakeResponse.new)
+
+          subject.update_by_query :index => 'foo', :slices => 2
+        end
+
       end
 
     end
